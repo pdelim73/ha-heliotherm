@@ -66,9 +66,17 @@ of commands it builds is:
 | `SP,NR=9` | Read the software version (setup) | `HeliothermClient.read_sw_version()` |
 | `MP,NR=<n>` / `SP,NR=<n>` | Read one register | `HeliothermClient.read_param()` |
 
-`<n>` comes only from the fixed parameter table in `const.py`. No request carries
-a `VAL=` field, so no request can set a value. There are no `number`, `select`,
-`switch`, `climate` or `button` platforms, and no services.
+`<n>` comes only from the fixed parameter table in `const.py`. There are no
+`number`, `select`, `switch`, `climate` or `button` platforms, and no services.
+
+**This is enforced by the code itself.** `build_request()` checks every command
+against a strict allowlist (`_ALLOWED_CMD_RE`: `LIN`, `LOUT`, `RID`,
+`MP,NR=<digits>`, `SP,NR=<digits>`, full match only) and raises `ValueError`
+before any byte is produced. Anything else is refused, including every request
+that carries `VAL=`, a second command smuggled after a `;`, and other
+controller commands such as `CLK`. Because `build_request()` is the only place
+outgoing frames are made, a future code change would have to edit that one line
+to send a write. Unit tests pin this down (§6).
 
 ### 2.2 It occupies the link only briefly
 
@@ -288,10 +296,14 @@ On the reference unit (HP08E-WEB, SW 2324):
 Not yet verified on the reference unit: discovery filtering (unsupported
 registers get no entity) is covered by unit tests only.
 
-Unit tests (`pytest`, 40 tests, run locally; they stub Home Assistant so they run
+Unit tests (`pytest`, 59 tests, run locally; they stub Home Assistant so they run
 without it):
 
 - checksum and full frames against the captured reference frames;
+- read-only allowlist: every register in the table is accepted; writes
+  (`SP,NR=83,VAL=50`), smuggled commands, unused controller commands and
+  malformed input are refused, and a refused command writes nothing to the
+  socket;
 - value coercion for FLOAT/INT/BOOL; missing `VAL` and `US=0` raise
   `HeliothermProtocolError`; a `STATUS=0` field is not mistaken for `US=0`;
 - a bad response header raises `HeliothermFramingError`; a clean `ERR` reply

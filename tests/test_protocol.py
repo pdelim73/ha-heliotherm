@@ -79,7 +79,7 @@ class TestBuildRequest:
         assert frame[6] == expected_len
 
     def test_last_byte_is_valid_checksum(self):
-        frame = build_request("SP,NR=83,VAL=50")
+        frame = build_request("SP,NR=83")
         assert calc_checksum(frame[:-1]) == frame[-1]
 
     def test_payload_is_tilde_wrapped(self):
@@ -87,6 +87,44 @@ class TestBuildRequest:
         length = frame[6]
         payload = frame[7: 7 + length].decode("ascii")
         assert payload == "~LIN;"
+
+
+# ── Read-only guarantee ───────────────────────────────────────────────────────
+
+class TestReadOnlyAllowlist:
+    """build_request() is the only producer of outgoing frames; it must accept
+    exactly the read commands this integration uses and refuse everything else."""
+
+    @pytest.mark.parametrize("cmd", ["LIN", "LOUT", "RID", "SP,NR=9", "MP,NR=0", "SP,NR=375"])
+    def test_read_commands_accepted(self, cmd):
+        assert build_request(cmd).startswith(REQUEST_HEADER)
+
+    def test_every_register_in_the_table_is_accepted(self):
+        from custom_components.heliotherm.const import ALL_PARAMS
+        for p in ALL_PARAMS:
+            build_request(f"{p.ptype},NR={p.nr}")
+
+    @pytest.mark.parametrize("cmd", [
+        "SP,NR=83,VAL=50",          # a write
+        "MP,NR=0,VAL=1",
+        "SP,NR=13;SP,NR=13,VAL=0",  # smuggled second command
+        "CLK", "ALC",               # controller commands this integration doesn't use
+        "LOGIN", "sp,nr=1", "SP,NR=", "SP,NR=x", "", "RID\n",
+    ])
+    def test_everything_else_refused(self, cmd):
+        with pytest.raises(ValueError):
+            build_request(cmd)
+
+    async def test_refused_command_puts_nothing_on_the_wire(self):
+        writer = MagicMock()
+        writer.is_closing.return_value = False
+        writer.drain = AsyncMock()
+        client = HeliothermClient(_HOST, 4196)
+        client._reader = AsyncMock()
+        client._writer = writer
+        with pytest.raises(ValueError):
+            await client._transact("SP,NR=83,VAL=50")
+        writer.write.assert_not_called()
 
 
 # ── Value / type coercion ────────────────────────────────────────────────────

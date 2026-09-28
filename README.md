@@ -28,7 +28,7 @@ heat pump.
 | Pump interface | `-X26 "Modem COM"` RS232, 19200 baud 8N1, RTS/CTS |
 | Network bridge | Any transparent RS232-to-Ethernet converter in TCP Server mode (tested: Waveshare) |
 | Protocol | Heliotherm framed ASCII protocol, implemented natively in `asyncio` |
-| Access | Read-only — no write command exists in the code |
+| Access | Read-only — enforced by a command allowlist in the frame builder |
 | Entities | Up to 61 (26 measurements + 35 settings/counters); only registers the pump actually supports are created — 51 on the reference unit |
 | Polling | Measurements every 60 s (configurable 30–600 s); settings/counters every 10th poll |
 | Setup | UI config flow (host + port) |

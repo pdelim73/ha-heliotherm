@@ -71,8 +71,16 @@ def calc_checksum(data: bytes) -> int:
     return cs
 
 
+# The complete set of commands this integration may send. build_request() is the
+# only producer of outgoing frames, so anything else — including any request that
+# carries VAL= — can never reach the heat pump.
+_ALLOWED_CMD_RE = re.compile(r"LIN|LOUT|RID|(?:MP|SP),NR=\d+")
+
+
 def build_request(cmd: str) -> bytes:
-    """Build a complete request frame for a command string."""
+    """Build a complete request frame for a read-only command string."""
+    if not _ALLOWED_CMD_RE.fullmatch(cmd):
+        raise ValueError(f"Refusing to send non-read command: {cmd!r}")
     wrapped = f"~{cmd};".encode("ascii")
     data = REQUEST_HEADER + bytes([len(wrapped)]) + wrapped
     return data + bytes([calc_checksum(data)])
