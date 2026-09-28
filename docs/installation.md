@@ -138,6 +138,12 @@ disable it again to download the log. The log shows the discovery result, e.g.
 
 Your configuration, entities and history carry over.
 
+If an update renames an entity's internal key, Home Assistant creates a new
+entity and the old one shows as *no longer provided*; open the old one's
+settings and delete it. This happened once: **1.4.0** replaced *BSZ Verdichter
+Schaltungen* with *Z Impulse Stromzaehl* (same register, `MP,NR=41`, which the
+earlier name had mislabelled).
+
 ## 8. Uninstalling
 
 1. **Settings → Devices & Services → Heliotherm Heat Pump (Read-Only) → ⋮ →

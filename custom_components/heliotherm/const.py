@@ -56,7 +56,9 @@ MP_PARAMS: tuple[HtParam, ...] = (
     HtParam("stoerung", "Stoerung", "MP", 31, "BOOL", None, None, None),
     HtParam("hauptschalter", "Hauptschalter", "MP", 36, "BOOL", None, None, None),
     HtParam("fws_stroemungsschalter", "FWS Stroemungsschalter", "MP", 38, "BOOL", None, None, None),
-    HtParam("bsz_verdichter_schaltungen", "BSZ Verdichter Schaltungen", "MP", 41, "INT", None, None, SensorStateClass.TOTAL_INCREASING),
+    # Named after the pump's own NAME= reply (20-char, likely truncated); the
+    # htheatpump database's "BSZ Verdichter Schaltungen" does not apply to SW 2324.
+    HtParam("z_impulse_stromzaehl", "Z Impulse Stromzaehl", "MP", 41, "INT", None, None, SensorStateClass.MEASUREMENT),
     HtParam("frischwasserpumpe", "Frischwasserpumpe", "MP", 50, "INT", None, None, SensorStateClass.MEASUREMENT),
     HtParam("verdichteranforderung", "Verdichteranforderung", "MP", 56, "INT", None, None, SensorStateClass.MEASUREMENT),
     HtParam("hkr_sollwert", "HKR_Sollwert", "MP", 57, "FLOAT", "°C", SensorDeviceClass.TEMPERATURE, SensorStateClass.MEASUREMENT),)

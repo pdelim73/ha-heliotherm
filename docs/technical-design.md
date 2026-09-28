@@ -211,7 +211,7 @@ classed as connection faults that never blacklist.
 | Stoerung | `MP,NR=31` | binary_sensor | BOOL | — | problem | — | 0 … 1 | ✓ |
 | Hauptschalter | `MP,NR=36` | binary_sensor | BOOL | — | power | — | 0 … 1 | ✓ |
 | FWS Stroemungsschalter | `MP,NR=38` | binary_sensor | BOOL | — | — | — | 0 … 1 | ✓ |
-| BSZ Verdichter Schaltungen | `MP,NR=41` | sensor | INT | — | — | total_increasing | 0 … 1 | ✓ |
+| Z Impulse Stromzaehl | `MP,NR=41` | sensor | INT | — | — | measurement | 0 … 1 | ✓ |
 | Frischwasserpumpe | `MP,NR=50` | sensor | INT | — | — | measurement | 0 … 100 | ✓ |
 | Verdichteranforderung | `MP,NR=56` | sensor | INT | — | — | measurement | 0 … 4 | ✓ |
 | HKR_Sollwert | `MP,NR=57` | sensor | FLOAT | °C | temperature | measurement | 0.0 … 50.0 | ✓ |
@@ -254,6 +254,13 @@ classed as connection faults that never blacklist.
 Names are the controller's own German parameter names. The `SP` registers hold
 configuration values and operating counters. They are exposed as read-only
 sensors.
+
+The table was derived from the `htheatpump` parameter database. On the reference
+unit, every register's own `NAME=` reply agrees with that database (allowing for
+the pump's 20-character truncation) except `MP,NR=41`: the database calls it
+*BSZ Verdichter Schaltungen* (range 0 … 100000), but this pump reports
+*Z Impulse Stromzaehl* (range 0 … 1). Since 1.4.0 the entity uses the pump's
+name (see §7).
 
 ## 5. Comparison with other Heliotherm integrations studied
 
@@ -337,10 +344,12 @@ schedule run Home Assistant's `hassfest` validator on the integration
 - **Stale value after a mid-life rejection.** If a supported register starts
   returning `ERR` or `US=0`, its entity keeps showing the last value (not
   *unavailable*) until the 30-poll recheck retries it.
-- **`MP,NR=41` label.** The table names it *BSZ Verdichter Schaltungen*
-  (compressor starts, `total_increasing`), but the pump reports its own name as
-  *Z Impulse Stromzaehl* with a range of 0 … 1, which suggests an electricity
-  meter pulse input rather than a start counter. Treat its value with care.
+- **`MP,NR=41` meaning unknown.** Named after the pump's own reply,
+  *Z Impulse Stromzaehl*, which is 20 characters and so probably truncated. The
+  pump reports a range of 0 … 1; what the value means is not documented. It is
+  recorded as a plain `measurement`. Before 1.4.0 it was mislabelled *BSZ
+  Verdichter Schaltungen* (`total_increasing`), the name the `htheatpump`
+  database gives register 41.
 - **Raw codes.** *Betriebsart*, *Verdichter_Status*, *Verdichteranforderung* and
   similar registers are shown as raw integers. Their meaning on SW 2324 is not
   mapped.
