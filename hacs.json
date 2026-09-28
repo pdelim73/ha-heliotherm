@@ -1,0 +1,6 @@
+{
+  "name": "Heliotherm Heat Pump (Read-Only)",
+  "render_readme": true,
+  "content_in_root": false,
+  "homeassistant": "2024.12.0"
+}

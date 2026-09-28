@@ -1,0 +1,12 @@
+{
+  "domain": "heliotherm",
+  "name": "Heliotherm Heat Pump (Read-Only)",
+  "codeowners": ["@pdelim73"],
+  "config_flow": true,
+  "documentation": "https://github.com/pdelim73/ha-heliotherm",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/pdelim73/ha-heliotherm/issues",
+  "requirements": [],
+  "version": "1.2.0"
+}

@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Heliotherm heat pump",
+        "description": "Enter the address of the serial-to-Ethernet converter connected to the heat pump's -X26 Modem COM port.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        },
+        "data_description": {
+          "host": "IP address of the Waveshare (or similar) RS232-to-Ethernet converter.",
+          "port": "TCP Server port configured on the converter."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach the converter. Check the IP address, port, and that the converter is powered and on the network.",
+      "invalid_response": "Connected, but the heat pump did not respond correctly. Check that the converter is set to 19200 baud, 8N1, RTS/CTS flow control, and transparent TCP Server mode.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This heat pump is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Heliotherm polling options",
+        "data": {
+          "scan_interval": "Polling interval",
+          "sp_interval": "Read settings every N cycles"
+        },
+        "data_description": {
+          "scan_interval": "How often to read live measurements. The serial link runs at 19200 baud, so values below 60 seconds may not complete in time.",
+          "sp_interval": "Configuration values change rarely. Reading them on every cycle wastes bus time."
+        }
+      }
+    }
+  }
+}
