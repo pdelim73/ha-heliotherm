@@ -146,7 +146,8 @@ HeliothermError
 ```
 
 - A `HeliothermProtocolError` (or an unparseable value) blacklists **that
-  register only** for the rest of its life cycle.
+  register only**: during discovery it is left out of the supported set; after
+  discovery it is skipped until the next recheck.
 - A `HeliothermConnectionError` aborts the poll, is reported to Home Assistant as
   `UpdateFailed`, and blacklists nothing. The next poll opens a fresh session.
 - Every 30 polls the blacklist is cleared so an active register knocked out by a
@@ -272,9 +273,9 @@ layout. Nothing below was run by this project except the previous HtREST setup.
 `deggle/ha_heliotherm_en` (English names) are GitHub forks of
 `mbuchber/ha_heliotherm`. "—" means not recorded in this study.
 
-Where this integration fits: the pump exposes only the `-X26` serial port, you
-want no extra host or dependency, and the heat pump must not be controllable
-from Home Assistant.
+Where this integration fits: you want to use the pump's `-X26` serial port, with
+no extra host or dependency, and the heat pump must not be controllable from
+Home Assistant.
 
 ## 6. Verification performed
 
@@ -293,8 +294,8 @@ On the reference unit (HP08E-WEB, SW 2324):
 - **Desync diagnosis**: the flat-line failure in §3.3 was diagnosed from real
   debug logs, whose garbled headers decoded back to real reply text.
 
-Not yet verified on the reference unit: discovery filtering (unsupported
-registers get no entity) is covered by unit tests only.
+Not yet verified on the reference unit, covered by unit tests only: discovery
+filtering (unsupported registers get no entity) and the command allowlist.
 
 Unit tests (`pytest`, 59 tests, run locally; they stub Home Assistant so they run
 without it):
@@ -319,8 +320,7 @@ python -m pytest
 ```
 
 Continuous integration: every push to `main`, every pull request and a weekly
-schedule run Home
-Assistant's `hassfest` validator on the integration
+schedule run Home Assistant's `hassfest` validator on the integration
 ([workflow](../.github/workflows/validate.yml)); results are in the repository's
 *Actions* tab. The unit tests are not part of CI.
 
