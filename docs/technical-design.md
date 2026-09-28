@@ -318,6 +318,12 @@ pip install -r tests/requirements.txt
 python -m pytest
 ```
 
+Continuous integration: every push to `main`, every pull request and a weekly
+schedule run Home
+Assistant's `hassfest` validator on the integration
+([workflow](../.github/workflows/validate.yml)); results are in the repository's
+*Actions* tab. The unit tests are not part of CI.
+
 ## 7. Known limitations
 
 - **One unit tested.** Only an HP08E-WEB with SW 2324. Other Heliotherm
