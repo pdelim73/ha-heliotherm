@@ -35,6 +35,7 @@ heat pump.
 | Dependencies | None beyond Home Assistant |
 | Minimum Home Assistant | 2024.12.0 |
 | Installation | HACS → custom repository |
+| Versioning | [GitHub releases](https://github.com/pdelim73/ha-heliotherm/releases); tag `vX.Y.Z` = `manifest.json` version |
 
 ## License
 

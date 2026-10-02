@@ -128,12 +128,18 @@ disable it again to download the log. The log shows the discovery result, e.g.
 
 ## 7. Updating
 
-1. Open **HACS**, find **Heliotherm Heat Pump (Read-Only)**.
-2. If HACS offers an **Update**, install it.
-   This repository has no GitHub Releases, so HACS tracks the latest commit on
-   `main` and may not always show an update badge. If there isn't one, open the
-   integration in HACS → **⋮ → Redownload** — this fetches whatever is on `main`.
-3. **Restart Home Assistant.** Python files under `custom_components/` are only
+Every version is published as a
+[GitHub release](https://github.com/pdelim73/ha-heliotherm/releases) whose tag
+(e.g. `v1.4.1`) matches the `version` in `manifest.json`. HACS treats the latest
+release as the available version, and the release notes list anything you need
+to do, such as entity changes.
+
+1. When a new release is out, HACS offers an **Update** for **Heliotherm Heat
+   Pump (Read-Only)**. Install it.
+   To choose a specific version instead (for example to go back one), open the
+   integration in HACS → **⋮ → Redownload** and pick one of the latest releases
+   (or `main`).
+2. **Restart Home Assistant.** Python files under `custom_components/` are only
    reloaded on a full restart.
 
 Your configuration, entities and history carry over.
